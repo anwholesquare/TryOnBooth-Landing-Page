@@ -1,0 +1,124 @@
+:root {
+    --logoHeight: 100px;
+}
+
+html[data-theme='light'] {
+    --borderColor: black;
+    --logoButtonColor: #761CCB;
+    --logoTextColor: black;
+    --bgBodyColor: white;
+    --text-color: black;
+}
+
+html[data-theme='dark'] {
+    --borderColor: white;
+    --logoButtonColor: #761CCB;
+    --logoTextColor: white;
+    --bgBodyColor: black;
+    --text-color: white;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+@font-face {
+    font-family: 'GlacialIndifferenceBold';
+        src: url('GlacialIndifferenceBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+
+
+.logoDiv{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+}
+
+.firstLineLogo{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+
+.secondLineLogo{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.firstLineLogo span{
+    font-size:calc(var(--logoHeight) * 0.5);
+    font-family: "GlacialIndifferenceBold";
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: calc((var(--logoHeight) / 18) *2);
+    text-align: left; 
+    color: var(--logoTextColor);
+}
+
+
+.secondLineLogo span{
+    font-size:calc(var(--logoHeight) * 0.47588);
+    font-family: "GlacialIndifferenceBold";
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: calc((var(--logoHeight) / 18) *2);
+    text-align: left; 
+    color: var(--logoTextColor);
+}
+
+.roundshape{
+    width: calc(var(--logoHeight) * 2.12 * 0.38);
+    height: calc(var(--logoHeight) * 0.4);
+    border: calc(var(--logoHeight) / 18) solid var(--borderColor);
+    border-radius: 150px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html[data-theme='light'] .roundshape{
+    justify-content: flex-start;
+}
+
+html[data-theme='dark'] .roundshape{
+    justify-content: flex-end;
+}
+
+#logoClick:hover, #logoClick:focus {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:hover, button:focus {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.circleLogoButton{
+    width: calc((var(--logoHeight) / 18) * 4);
+    height: calc((var(--logoHeight) / 18) * 4);
+    border: calc(var(--logoHeight) / 18) solid var(--borderColor);
+    border-radius: 150px;
+    margin-left: calc(var(--logoHeight) / 30);
+    background-color: var(--logoButtonColor);
+    margin-right: calc(var(--logoHeight) / 30);
+}
+
+
+[data-theme='dark'] .form-control {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-color: rgba(0, 0, 0, 0.6);
+    color: var(--text-color) !important;
+}
+
+[data-theme='dark'] .form-control:focus {
+    color: var(--text-color) !important;
+}
+
+
+

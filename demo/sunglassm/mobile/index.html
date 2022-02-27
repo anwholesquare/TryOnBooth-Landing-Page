@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-language" content="en-EN" />
+    <title>Hoobohoo Glasses</title>
+    <script src="files/faceFilter.js"></script>
+    <script src="files/three.js"></script>
+    <script src="files/ThreejsHelper.js"></script>
+    <script src="files/resizer.js"></script>
+    <script src="./ThreeGlassesCreator.js"></script>
+    <script src="./demo.js"></script>
+    <link rel="stylesheet" href="files/styles.css" type="text/css" />
+  </head>
+  
+  <body id="body" onload="main()" style='color: white'>
+    <div id="nav">
+        <h3 style="margin-left: 10px;">HOOBOHOO </h3>
+        <div>
+        <img src="capture.png" alt="capture" height="30px" width="auto" onclick= "CaptureImage()"/>
+        <img style="margin-left: 10px; margin-right: 10px;" src="share.png" alt="capture" height="30px" width="auto"/>
+        </div>
+    </div>
+    <div id="webcontainer">
+            
+
+            <div id= "webar">
+                    <canvas width="600" height="600" id='canvaser'></canvas>
+            </div>
+            <div id= "eyedesk" style="background-color : black;">
+                <img id="thumb" src="thumb.jpg" alt="Ray Ban Ultima 2140"/>
+                <h3>Ray Ban Ultima 2140</h3>
+                <p> Price : $199 </p>
+				<button class="round" onclick= "window.history.back();" > Go Back</button>
+                <p style="padding-right: 5px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip commodo consequat.</p>
+				<button class="round" onclick="window.open('https://hoobohoo.com/tryon/sunglassh')" > View HD</button>
+				<p style="padding-right: 5px;"> If HD doesn't work, your device can't support HD model showcase</p></div>
+			</div>
+    <div class="modal">
+        <div style="display: flex; justify-content: center; align-items:center; color : black; flex-flow:column; margin:10px">
+            <h1 style="display: block;">Please Wait</h1>
+            <p> Allow the camera permission and Make sure your face is visible to camera.</p>
+            <button class="round" onclick="loadingToggle()"> Okay, I understand</button>
+        </div>
+    </div>
+    <a style="display:none" id="link"></a>
+    <script>
+        
+            function loadingToggle(){
+                var element = document.getElementById("body");
+                if (element.classList) { 
+                element.classList.toggle("loading");
+                } else {
+                var classes = element.className.split(" ");
+                var i = classes.indexOf("loading");
+
+                if (i >= 0) 
+                    classes.splice(i, 1);
+                else 
+                    classes.push("loading");
+                    element.className = classes.join(" "); 
+                }
+            }
+            function CaptureImage(){
+                canvas = document.getElementById('canvaser');
+                var link = document.getElementById('link');
+                link.setAttribute('download', 'HooboHooGlasses.png');
+                link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+                link.click();
+	        };
+
+            loadingToggle();
+    </script>
+  </body>
+</html>
+ 
+ 

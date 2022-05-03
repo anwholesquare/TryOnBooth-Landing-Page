@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-language" content="en-EN" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>Lunettes TryOn System | TryOnBooth</title>
+    <script src="dist/face-filter-demo.js"></script>
+    <script src="helpers/THREE_JS_SUPPORT-demo.js"></script>
+    <script src="three.js"></script>
+    <script src="GLTFLoader.js"></script>
+    <script src="DRACOLoader.js"></script>
+    <script src="RGBELoader.js"></script>
+    <script src="postprocessing/EffectComposer.js"></script>
+    <script src="postprocessing/ShaderPass.js"></script>
+    <script src="postprocessing/RenderPass.js"></script>
+    <script src="shaders/CopyShader.js"></script>
+    <script src="postprocessing/UnrealBloomPassTweaked.js"></script>
+    <script src="shaders/LuminosityHighPassShader.js"></script>
+    <script src="postprocessing/SSAARenderPass.js"></script>
+    <script src="postprocessing/TAARenderPass.js"></script>
+    <script src="helpers/FLIP_SCREEN-demo.js"></script>
+    <script src="./main.js"></script>
+    <script src="helpers/stabilizers/OneEuroStabilizer.js"></script>
+    <style type='text/css'>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+        body {
+            margin: 0;
+            background-color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        #ARCanvas,
+        #DRAWCanvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            /* mirror the canvas: */
+            transform: rotateY(180deg);
+        }
+        
+        #ARCanvas {
+            z-index: 0;
+        }
+        
+        #DRAWCanvas {
+            z-index: 1;
+        }
+        
+        #controls {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            width: 100vw;
+            bottom: 0;
+            left: 0;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        
+        #controls>div {
+            cursor: pointer;
+            flex-grow: 1;
+            font-variant: small-caps;
+            font-size: 14pt;
+            text-align: center;
+            min-width: 110px;
+            box-sizing: border-box;
+            padding-top: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            height: 40px;
+            color: #eee;
+        }
+        
+        #controls>div:hover {
+            background: rgba(50, 50, 50, 0.5);
+            color: #fff;
+        }
+        
+        #price {
+            position: absolute;
+            top: 30px;
+            left: 15px;
+            background-color: rgba(115, 115, 115, 0.77);
+            opacity: .77;
+            border-radius: 20px;
+            height: 30px;
+            width: 80px;
+            z-index: 100;
+            text-align: center;
+        }
+        
+        #price p {
+            font-size: 13px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 7px;
+            color: white;
+        }
+        
+        #bottom {
+            position: absolute;
+            bottom: 0px;
+            height: 100px;
+            background-color: rgb(28 28 28 / 66%);
+            width: 100%;
+            z-index: 100;
+        }
+        
+        #blurred {
+            position: absolute;
+            top: 0px;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(118, 28, 202, 0.68);
+            z-index: 200;
+        }
+        
+        #blurred .title {
+            vertical-align: middle;
+            text-align: center;
+            padding-top: 120px;
+            font-size: 16.5px;
+            color: white;
+        }
+        
+        .brand {
+            width: 116.67px;
+            height: 50px;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            opacity: .76;
+        }
+        
+        .model {
+            position: absolute;
+            bottom: 45px;
+            font-size: 16.5px;
+            left: 16px;
+            color: white;
+        }
+        
+        .order {
+            position: absolute;
+            bottom: 30px;
+            right: 10px;
+            height: 40px;
+            width: 120px;
+            background-color: #761CCB;
+            border-radius: 5px;
+        }
+        
+        .order p {
+            font-weight: 600;
+            color: white;
+            font-size: 16.5px;
+            vertical-align: middle;
+            text-align: center;
+            line-height: 5px;
+        }
+        
+        #logo {
+            position: absolute;
+            right: 10px;
+            opacity: .6;
+            height: 80px;
+            width: 104px;
+            z-index: 100;
+        }
+        
+        #modelChooser {
+            position: absolute;
+            left: 10px;
+            bottom: 120px;
+            height: 50px;
+            background-image: url('assets/4.png');
+            width: 50px;
+            z-index: 101;
+            box-shadow: rgb(255 255 255 / 35%) 5px 5px 5px;
+            background-size: cover;
+        }
+        
+        #capturePic {
+            position: absolute;
+            right: 10px;
+            bottom: 120px;
+            height: 50px;
+            background: white;
+            border-radius: 50px;
+            width: 50px;
+            z-index: 101;
+            background-size: cover;
+        }
+        
+        #capturePic img {
+            width: 36px;
+            height: 36px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        #Wish {
+            position: absolute;
+            right: 10px;
+            bottom: 190px;
+            height: 50px;
+            background: white;
+            border-radius: 50px;
+            width: 50px;
+            z-index: 101;
+            background-size: cover;
+        }
+        
+        #Wish img {
+            width: 36px;
+            height: 36px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            margin-top: 10px;
+        }
+        
+        #debBox {
+            height: 400px;
+            width: 100%;
+            position: absolute;
+            top: 190px;
+        }
+        
+        #captureDataShown {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            z-index: 200;
+            background-color: rgba(118, 28, 202, 0.68);
+        }
+        
+        #box {
+            width: 300px;
+            height: 100px;
+            background: white;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 30px;
+            border-radius: 7px;
+            box-shadow: rgba(0, 0, 0, 0.35) 5px 5px 10px;
+        }
+        
+        .imgBox {
+            width: 72px;
+            height: 72px;
+            margin-left: auto;
+            margin-right: auto;
+            display: inline;
+            padding: 10px;
+            padding-top: 15px;
+        }
+        
+        .subtitle {
+            font-size: 16.5px;
+            color: black;
+            padding-left: 110px;
+            transform: translate(0px, -100px);
+        }
+        
+        .priceBox {
+            font-size: 16.5px;
+            color: black;
+            padding-left: 110px;
+            transform: translate(0px, -110px);
+        }
+        
+        .close {
+            background: url('assets/close.png');
+            background-size: cover;
+            width: 32px;
+            height: 32px;
+            margin-left: auto;
+            margin-right: auto;
+            transform: translate(140px, -100px);
+        }
+        
+        .close1 {
+            background: url('assets/close.png');
+            background-size: cover;
+            width: 32px;
+            height: 32px;
+            position: absolute;
+            top: 30px;
+            right: 15%;
+            transform: translate(-10px, 10px);
+        }
+        
+        .displayHidden {
+            display: none;
+        }
+        
+        #save {
+            position: absolute;
+            top: 78%;
+            margin-left: auto;
+            margin-right: auto;
+            left: 50%;
+            background: white;
+            padding: 5px;
+            width: 80px;
+            text-align: center;
+            border-radius: 5px;
+            transform: translateX(-100px);
+            color: #761CCB;
+            font-weight: 600;
+            font-size: 16.5px;
+        }
+        
+        #share {
+            position: absolute;
+            top: 78%;
+            margin-left: auto;
+            margin-right: auto;
+            left: 50%;
+            background: white;
+            padding: 5px;
+            width: 80px;
+            text-align: center;
+            border-radius: 5px;
+            color: #761CCB;
+            font-weight: 600;
+            font-size: 16.5px;
+        }
+        
+        #captureData {
+            width: 70%;
+            height: auto;
+            margin: auto;
+            margin-top: 30px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="price">
+        <p id="ptext">৳ 950.00</p>
+    </div>
+    <div id="bottom">
+        <p id="modelName" class="model">Vista Transparent</p><img src="assets/lunettes.png" class="brand">
+        <div class="order" onclick="ordernow();">
+            <p>Order Now</p>
+        </div>
+    </div><img id="logo" src="assets/logo.png" />
+    <div id="modelChooser" onclick="document.getElementById('blurred').style.display='block';"></div>
+    <div id="capturePic" onclick="capture();"> <img src="assets/3.png" /> </div>
+    <div id="Wish" onclick="toggleWish();"> <img id="wishID" src="assets/2.png" /> </div>
+    <div id="blurred" class="displayHidden">
+        <p class="title"> Suggested For You </p>
+        <div id="debBox">
+            <div class="close" onclick="document.getElementById('blurred').style.display='none';"> </div>
+            <div id="box" onclick="loadGlass1();"> <img class="imgBox" src="assets/5.png">
+                <p class="subtitle">Rayban Aviator</p>
+                <div class="priceBox">৳ 1450.00</div>
+            </div>
+            <div id="box" onclick="loadGlass2();"> <img class="imgBox" style="top:160px !important" src="assets/4.png">
+                <p class="subtitle">Vista Transparent</p>
+                <div class="priceBox">৳ 950.00</div>
+            </div>
+        </div>
+    </div>
+    <div id="captureDataShown" class="displayHidden">
+        <div id="save" onclick="save();"> SAVE </div>
+        <div id="share" onclick="share();"> SHARE </div><img id="captureData" src="">
+        <div class="close1" onclick="document.getElementById('captureDataShown').style.display='none';"> </div>
+    </div><canvas id='ARCanvas'></canvas> <canvas id='DRAWCanvas'></canvas>
+    <script>
+        var glassLoaded = 2;
+
+        function loadGlass1() {
+            document.getElementById("ptext").innerHTML = "৳ 1450.00";
+            document.getElementById("modelName").innerHTML = "Rayban Aviator";
+            document.getElementById('blurred').style.display = 'none';
+            document.getElementById('modelChooser').style.backgroundImage = "url('assets/5.png')";
+            TryOnBooth.load("assets/models3D/glasses1.glb");
+            glassLoaded = 1;
+        }
+
+        function loadGlass2() {
+            document.getElementById("ptext").innerHTML = "৳ 950.00";
+            document.getElementById("modelName").innerHTML = "Vista Transparent";
+            document.getElementById('blurred').style.display = 'none';
+            document.getElementById('modelChooser').style.backgroundImage = "url('assets/4.png')";
+            TryOnBooth.load("assets/models3D/c2.glb");
+            glassLoaded = 2;
+        }
+        var palat = 0;
+
+        function toggleWish() {
+            if (palat == 0) {
+                document.getElementById('wishID').src = "assets/1.png";
+                palat = 1;
+            } else {
+                document.getElementById('wishID').src = "assets/2.png";
+                palat = 0;
+            }
+        }
+        var mDataURL = null;
+
+        function capture() {
+            TryOnBooth.capture_image(function(cv) {
+                const dataURL = cv.toDataURL('image/png');
+                document.getElementById('captureData').src = dataURL;
+                mDataURL = dataURL;
+            });
+            document.getElementById('captureDataShown').style.display = 'block';
+        }
+
+        function save() {
+            var a = document.createElement("a");
+            a.href = mDataURL;
+            a.download = document.getElementById("modelName").innerHTML + ".png";
+            a.click();
+            document.getElementById('captureDataShown').style.display = 'none';
+        }
+
+        function ordernow() {
+            if (glassLoaded == 2) {
+                window.open("https://lunettes.com.bd/product/vista-transparent/", "_self");
+            } else {
+                window.open("https://www.ray-ban.com/usa/sunglasses/RB3025%20UNISEX%20aviator%20classic-gold/805289602057", "_self");
+            }
+        }
+
+        function share() {
+            window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(mDataURL) + '&t=' + encodeURIComponent("Lunettes Glasses"), 'sharer', 'toolbar=0,status=0,width=626,height=436');
+            document.getElementById('captureDataShown').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
